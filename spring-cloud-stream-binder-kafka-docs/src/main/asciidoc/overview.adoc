@@ -41,7 +41,7 @@ Partitioning also maps directly to Apache Kafka partitions as well.
 
 This section contains the configuration options used by the Apache Kafka binder.
 
-For common configuration options and properties pertaining to binder, refer to the https://github.com/spring-cloud/spring-cloud-stream/blob/master/spring-cloud-stream-docs/src/main/asciidoc/spring-cloud-stream-overview.adoc#configuration-options[core docs].
+For common configuration options and properties pertaining to binder, refer to the <<binding-properties,core documentation>>.
 
 === Kafka Binder Properties
 
@@ -158,7 +158,8 @@ If the consumer group is set explicitly for the consumer 'binding' (via `spring.
 Default: null (equivalent to `earliest`).
 enableDlq::
   When set to true, it will send enable DLQ behavior for the consumer.
-  Messages that result in errors will be forwarded to a topic named `error.<destination>.<group>`.
+  By default, messages that result in errors will be forwarded to a topic named `error.<destination>.<group>`.
+  The DLQ topic name can be configurable via the property `dlqName`.
   This provides an alternative option to the more common Kafka replay scenario for the case when the number of errors is relatively small and replaying the entire original topic may be too cumbersome.
 +
 Default: `false`.
@@ -166,6 +167,10 @@ configuration::
   Map with a key/value pair containing generic Kafka consumer properties.
 +
 Default: Empty map.
+dlqName::
+  The name of the DLQ topic to receive the error messages.
++
+Default: null (If not specified, messages that result in errors will be forwarded to a topic named `error.<destination>.<group>`).
 
 === Kafka Producer Properties
 
@@ -185,6 +190,11 @@ batchTimeout::
 (Normally the producer does not wait at all, and simply sends all the messages that accumulated while the previous send was in progress.) A non-zero value may increase throughput at the expense of latency.
 +
 Default: `0`.
+messageKeyExpression::
+ A SpEL expression evaluated against the outgoing message used to populate the key of the produced Kafka message.
+For example `headers.key` or `payload.myKey`.
++
+Default: `none`.
 configuration::
   Map with a key/value pair containing generic Kafka producer properties.
 +
