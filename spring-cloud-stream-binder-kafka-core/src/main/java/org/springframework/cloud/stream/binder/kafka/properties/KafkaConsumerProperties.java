@@ -22,10 +22,36 @@ import java.util.Map;
 /**
  * @author Marius Bogoevici
  * @author Ilayaperumal Gopinathan
+ * @author Soby Chacko
+ * @author Gary Russell
  *
- * <p>Thanks to Laszlo Szabo for providing the initial patch for generic property support.</p>
+ * <p>
+ * Thanks to Laszlo Szabo for providing the initial patch for generic property support.
+ * </p>
  */
 public class KafkaConsumerProperties {
+
+	public enum StartOffset {
+		earliest(-2L),
+		latest(-1L);
+
+		private final long referencePoint;
+
+		StartOffset(long referencePoint) {
+			this.referencePoint = referencePoint;
+		}
+
+		public long getReferencePoint() {
+			return this.referencePoint;
+		}
+	}
+
+	public enum StandardHeaders {
+		none,
+		id,
+		timestamp,
+		both
+	}
 
 	private boolean autoRebalanceEnabled = true;
 
@@ -33,15 +59,21 @@ public class KafkaConsumerProperties {
 
 	private Boolean autoCommitOnError;
 
-	private boolean resetOffsets;
-
 	private StartOffset startOffset;
 
 	private boolean enableDlq;
 
 	private String dlqName;
 
+	private KafkaProducerProperties dlqProducerProperties = new KafkaProducerProperties();
+
 	private int recoveryInterval = 5000;
+
+	private String[] trustedPackages;
+
+	private StandardHeaders standardHeaders = StandardHeaders.none;
+
+	private String converterBeanName;
 
 	private Map<String, String> configuration = new HashMap<>();
 
@@ -51,14 +83,6 @@ public class KafkaConsumerProperties {
 
 	public void setAutoCommitOffset(boolean autoCommitOffset) {
 		this.autoCommitOffset = autoCommitOffset;
-	}
-
-	public boolean isResetOffsets() {
-		return this.resetOffsets;
-	}
-
-	public void setResetOffsets(boolean resetOffsets) {
-		this.resetOffsets = resetOffsets;
 	}
 
 	public StartOffset getStartOffset() {
@@ -101,20 +125,6 @@ public class KafkaConsumerProperties {
 		this.autoRebalanceEnabled = autoRebalanceEnabled;
 	}
 
-	public enum StartOffset {
-		earliest(-2L), latest(-1L);
-
-		private final long referencePoint;
-
-		StartOffset(long referencePoint) {
-			this.referencePoint = referencePoint;
-		}
-
-		public long getReferencePoint() {
-			return this.referencePoint;
-		}
-	}
-
 	public Map<String, String> getConfiguration() {
 		return this.configuration;
 	}
@@ -130,4 +140,36 @@ public class KafkaConsumerProperties {
 	public void setDlqName(String dlqName) {
 		this.dlqName = dlqName;
 	}
+
+	public String[] getTrustedPackages() {
+		return trustedPackages;
+	}
+
+	public void setTrustedPackages(String[] trustedPackages) {
+		this.trustedPackages = trustedPackages;
+	}
+
+	public KafkaProducerProperties getDlqProducerProperties() {
+		return dlqProducerProperties;
+	}
+
+	public void setDlqProducerProperties(KafkaProducerProperties dlqProducerProperties) {
+		this.dlqProducerProperties = dlqProducerProperties;
+	}
+	public StandardHeaders getStandardHeaders() {
+		return this.standardHeaders;
+	}
+
+	public void setStandardHeaders(StandardHeaders standardHeaders) {
+		this.standardHeaders = standardHeaders;
+	}
+
+	public String getConverterBeanName() {
+		return this.converterBeanName;
+	}
+
+	public void setConverterBeanName(String converterBeanName) {
+		this.converterBeanName = converterBeanName;
+	}
+
 }

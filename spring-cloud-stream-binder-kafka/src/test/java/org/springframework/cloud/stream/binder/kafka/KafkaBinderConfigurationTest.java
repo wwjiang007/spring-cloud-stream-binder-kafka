@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springframework.cloud.stream.binder.kafka;
 
 import java.lang.reflect.Field;
@@ -21,6 +22,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.stream.binder.kafka.config.KafkaBinderConfiguration;
 import org.springframework.kafka.support.ProducerListener;
@@ -33,7 +35,9 @@ import static org.junit.Assert.assertNotNull;
  * @author Ilayaperumal Gopinathan
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = KafkaBinderConfiguration.class)
+@SpringBootTest(classes = { KafkaBinderConfiguration.class,
+		KafkaAutoConfiguration.class,
+		KafkaBinderConfigurationTest.class })
 public class KafkaBinderConfigurationTest {
 
 	@Autowired
@@ -50,4 +54,5 @@ public class KafkaBinderConfigurationTest {
 				producerListenerField, this.kafkaMessageChannelBinder);
 		assertNotNull(producerListener);
 	}
+
 }
